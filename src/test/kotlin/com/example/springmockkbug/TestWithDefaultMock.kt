@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestWithDefaultMock {
 
     @MockkBean
+//    @MockkBean(name = "default") // fixes problem
     private lateinit var service: ExampleService
 
     @Test
@@ -24,10 +25,15 @@ class TestWithDefaultMock {
         assertThat(actualResult).isEqualTo(stubbedResult)
     }
 
+    // This test passes if this class is run separately but fails if relaxed mock of ExampleService is registered first.
+    // The reason is in MockkDefinition class: equals and hashcode don't take relaxed and relaxUnitFun on board.
+    // In current implementation this problem can be solved by adding `name` in @MockkBean annotation to distinguish
+    // relaxed and default versions of mocks.
     @Test
     fun `method should throw exception if no answer was provided`() {
         assertThatThrownBy { service.foo() }
             .isInstanceOf(MockKException::class.java)
-            .hasMessageContaining("no answer found for: ExampleService(com.example.springmockkbug.ExampleService#0 bean#1).foo()")
+            .hasMessageContaining("no answer found for: ExampleService(")
+            .hasMessageContaining(").foo()")
     }
 }
