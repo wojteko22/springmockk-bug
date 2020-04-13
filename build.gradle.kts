@@ -23,6 +23,10 @@ dependencies {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
 	testImplementation("com.ninja-squad:springmockk:2.0.0")
+
+	// to test with locally built jar
+//	testImplementation(files("$projectDir/springmockk-2.0.0.jar")) // fixed version
+//	testImplementation("io.mockk:mockk:1.9.3")
 }
 
 tasks.withType<Test> {
